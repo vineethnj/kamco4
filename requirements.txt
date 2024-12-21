@@ -412,8 +412,7 @@ pyttsx3==2.98
 pytz==2024.1
 pyvis==0.3.2
 PyWavelets==1.6.0
-pywin32==306
-pywinpty==2.0.13
+
 PyYAML==6.0.1
 pyzbar==0.1.9
 pyzmq==26.0.3
