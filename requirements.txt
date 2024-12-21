@@ -62,7 +62,7 @@ coloredlogs==15.0.1
 comm==0.2.2
 comtypes==1.4.8
 contourpy==1.2.1
-crewai==0.32.2
+
 cryptography==43.0.3
 cssselect==1.2.0
 cycler==0.12.1
@@ -93,7 +93,7 @@ editdistance==0.8.1
 einops==0.7.0
 elevenlabs==1.12.1
 email_validator==2.2.0
-embedchain==0.1.109
+
 epitran==1.25.1
 et-xmlfile==1.1.0
 eval_type_backport==0.2.0
@@ -123,7 +123,7 @@ func-timeout==4.3.5
 g2pK==0.9.4
 gast==0.6.0
 gdown==5.2.0
-genai==2.1.0
+
 git-filter-repo==2.47.0
 gitdb==4.0.11
 GitPython==3.1.43
