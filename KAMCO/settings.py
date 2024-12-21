@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import os
+from decouple import config  # Use environment variables securely
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -26,7 +27,7 @@ SECRET_KEY = 'django-insecure-p0x#3pj%eac-w%s)6e+-xstul!@xkqokfe1d@l6ot3uw!523zl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 LOGIN_URL = '/'
@@ -80,6 +81,7 @@ WSGI_APPLICATION = 'KAMCO.wsgi.application'
 
 DATABASES = {
     'default': {
+        
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
@@ -121,6 +123,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+# Whitenoise for serving static files
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -139,3 +148,11 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+
+# Database configuration for Render
+import dj_database_url
+
+DATABASES = {
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
+}
