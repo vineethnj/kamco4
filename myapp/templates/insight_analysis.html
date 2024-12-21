@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Department Analytics Dashboard</title>
+    
+    <!-- CSS Dependencies -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@6.5.95/css/materialdesignicons.min.css">
+    
+    <style>
+        :root {
+            --primary-color: #1a237e;
+            --secondary-color: #283593;
+            --accent-color: #3949ab;
+            --text-color: #37474f;
+            --border-color: #e0e0e0;
+        }
+
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background-color: #f5f6fa;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 5px solid var(--accent-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .department-card {
+            background: white;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .department-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 1rem 1.5rem;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .analysis-section {
+            background-color: #ffffff;
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .chart-container {
+            height: 400px;
+            padding: 1rem;
+            background: #ffffff;
+            border-radius: 4px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 1rem 0;
+        }
+
+        .data-table th {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .data-table td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .refresh-button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .refresh-button:hover {
+            background-color: var(--primary-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .spinner-container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .metric-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 1rem;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="container">
+            <h1 class="dashboard-title text-center">Enterprise Department Analytics Dashboard</h1>
+            <p class="text-center text-light mb-0">Comprehensive Departmental Insights & Analysis</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <button id="refreshAnalysis" class="refresh-button">
+                <i class="fas fa-sync-alt me-2"></i>Refresh Analytics
+            </button>
+            {% comment %} <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown">
+                    <i class="fas fa-download me-2"></i>Export
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" onclick="exportToPDF()"><i class="far fa-file-pdf me-2"></i>Export as PDF</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="exportToExcel()"><i class="far fa-file-excel me-2"></i>Export as Excel</a></li>
+                </ul>
+            </div> {% endcomment %}
+        </div>
+
+        <div id="departmentsContainer">
+            {% for dept_data in department_insights %}
+            <div class="department-card">
+                <div class="card-header">
+                    <h2 class="mb-0">{{ dept_data.name }}</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3 class="h4 mb-3"><i class="fas fa-chart-pie me-2"></i>Analysis Overview</h3>
+                            <div id="analysis_{{ dept_data.id }}" class="analysis-section">
+                                {{ dept_data.analysis|linebreaks }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h3 class="h4 mb-3"><i class="fas fa-chart-bar me-2"></i>Query Distribution</h3>
+                            <div class="chart-container">
+                                <canvas id="chart_{{ dept_data.id }}"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h3 class="h4 mb-3"><i class="fas fa-table me-2"></i>Detailed Insights</h3>
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Topic</th>
+                                            <th>Frequency</th>
+                                            <th>Last Queried</th>
+                                            <th>Trend</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for insight in dept_data.insights_data %}
+                                        <tr>
+                                            <td>{{ insight.topic }}</td>
+                                            <td>{{ insight.frequency }}</td>
+                                            <td>{{ insight.last_queried }}</td>
+                                            <td>
+                                                <span class="trend-indicator">
+                                                    {% if insight.trend > 0 %}
+                                                    <i class="fas fa-arrow-up text-success"></i>
+                                                    {% elif insight.trend < 0 %}
+                                                    <i class="fas fa-arrow-down text-danger"></i>
+                                                    {% else %}
+                                                    <i class="fas fa-minus text-muted"></i>
+                                                    {% endif %}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loading">
+        <div class="spinner-container">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 mb-0">Generating comprehensive analysis...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+    <script>
+        // Initialize charts and data visualization
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCharts();
+            initializeMarkdown();
+            setupEventListeners();
+        });
+
+        function initializeCharts() {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        font: {
+                            family: 'Playfair Display',
+                            size: 16
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            };
+
+            {% for dept_data in department_insights %}
+            new Chart(
+                document.getElementById('chart_{{ dept_data.id }}').getContext('2d'),
+                {
+                    type: 'bar',
+                    data: {
+                        labels: [{% for insight in dept_data.insights_data %}'{{ insight.topic }}',{% endfor %}],
+                        datasets: [{
+                            label: 'Query Frequency',
+                            data: [{% for insight in dept_data.insights_data %}{{ insight.frequency }},{% endfor %}],
+                            backgroundColor: 'rgba(57, 73, 171, 0.6)',
+                            borderColor: 'rgba(26, 35, 126, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: chartOptions
+                }
+            );
+            {% endfor %}
+        }
+
+        function initializeMarkdown() {
+            document.querySelectorAll('.analysis-section').forEach(element => {
+                const content = element.textContent.trim();
+                element.innerHTML = marked.parse(content);
+            });
+        }
+
+        function setupEventListeners() {
+            document.getElementById('refreshAnalysis').addEventListener('click', refreshAnalysis);
+        }
+
+        async function refreshAnalysis() {
+            const loading = document.getElementById('loading');
+            loading.style.display = 'flex';
+
+            try {
+                const response = await fetch('/insight-analysis/', {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const data = await response.json();
+                updateDashboard(data);
+            } catch (error) {
+                showError('Failed to refresh analysis: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function updateDashboard(data) {
+            const container = document.getElementById('departmentsContainer');
+            container.innerHTML = '';
+
+            data.department_insights.forEach(dept => {
+                const section = createDepartmentSection(dept);
+                container.appendChild(section);
+            });
+
+            initializeCharts();
+            initializeMarkdown();
+        }
+
+        function showError(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show';
+            alert.innerHTML = `
+                <strong>Error!</strong> ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.container').prepend(alert);
+        }
+
+        function exportToPDF() {
+            const doc = new jspdf.jsPDF();
+            doc.text('Department Analytics Report', 20, 20);
+            // Add more PDF generation logic here
+            doc.save('department-analytics.pdf');
+        }
+
+        function exportToExcel() {
+            const wb = XLSX.utils.book_new();
+            // Add Excel generation logic here
+            XLSX.writeFile(wb, 'department-analytics.xlsx');
+        }
+    </script>
+</body>
+</html>

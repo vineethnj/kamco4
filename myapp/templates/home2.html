@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAMCO Enterprise Solutions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0a2647;
+            --secondary-color: #144272;
+            --accent-color: #205295;
+            --background-color: #f8f9fd;
+            --text-color: #2c3e50;
+            --card-background: #ffffff;
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><path fill="%23FFFFFF" fill-opacity="0.05" d="M45,-78C58.7,-70.9,70.3,-58.8,78.1,-44.7C85.9,-30.6,89.9,-14.3,88.7,1.2C87.5,16.7,81.1,32.3,73.3,47.7C65.5,63.1,56.3,78.2,42.8,84.6C29.3,91,11.7,88.7,-4.4,85.1C-20.5,81.5,-35.1,76.6,-47.4,68.2C-59.7,59.8,-69.7,47.9,-76.7,34.3C-83.7,20.7,-87.7,5.4,-85.8,-9.2C-83.9,-23.8,-76,-37.8,-65.5,-47.9C-55,-58,-41.9,-64.2,-29,-71.2C-16.1,-78.2,-3.2,-86,11.9,-85.6C27,-85.2,42,-85.1,45,-78Z" transform="translate(100 100)"/></svg>') center/cover no-repeat;
+            opacity: 0.1;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            font-weight: 400;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 5rem auto;
+            padding: 0 2rem;
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .agent-card {
+            background-color: var(--card-background);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: var(--card-shadow);
+            position: relative;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .agent-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .agent-icon {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .agent-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            color: var(--primary-color);
+        }
+
+        .agent-description {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.95rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(32, 82, 149, 0.3);
+        }
+
+        .footer {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: auto;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1.5rem;
+                margin: 3rem auto;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .agent-grid {
+                gap: 2rem;
+            }
+
+            .agent-card {
+                padding: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>KAMCO</h1>
+        {% if department %}
+            <p class="subtitle">{{ department }}</p>
+        {% else %}
+            <p class="subtitle">Advanced AI-Powered Business Intelligence Platform</p>
+        {% endif %}
+    </header>
+
+    <div class="container">
+        <div class="agent-grid">
+            <div class="agent-card">
+                <i class="fas fa-brain agent-icon"></i>
+                <h2 class="agent-title">Knowledge Assistant AI</h2>
+                <p class="agent-description">Advanced document intelligence system capable of processing and analyzing multiple PDFs with sophisticated natural language understanding for precise information retrieval.</p>
+                <a href="{% url 'knowledge_agent' %}" class="cta-button">Launch Assistant</a>
+            </div>
+
+            <div class="agent-card">
+                <i class="fas fa-robot agent-icon"></i>
+                <h2 class="agent-title">Universal Assistant AI</h2>
+                <p class="agent-description">Comprehensive AI solution combining document analysis with advanced problem-solving capabilities. Your strategic partner for complex business challenges.</p>
+                <a href="{% url 'universal_agent' %}" class="cta-button">Launch Assistant</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+    
+    </footer>
+</body>
+</html>
